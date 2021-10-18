@@ -1,5 +1,5 @@
 import os
-from google.cloud import pubsub_v1
+from google.cloud import pubsub_v1, storage
 from app.logger import logging_config
 
 logging_config()
@@ -15,6 +15,8 @@ class Config:
         self.PROJECT_ID = proj_id
         self.SURVEY_SUBSCRIBER = None
         self.SURVEY_SUBSCRIPTION_PATH = None
+        self.BUCKET_NAME = f'{proj_id}-survey-responses'
+        self.BUCKET = None
 
 
 CONFIG = Config(project_id)
@@ -32,3 +34,6 @@ def cloud_config():
     survey_subscriber = pubsub_v1.SubscriberClient()
     CONFIG.SURVEY_SUBSCRIPTION_PATH = survey_subscriber.subscription_path(project_id, subscription_id)
     CONFIG.SURVEY_SUBSCRIBER = survey_subscriber
+
+    storage_client = storage.Client(CONFIG.PROJECT_ID)
+    CONFIG.BUCKET = storage_client.bucket(CONFIG.BUCKET_NAME)
