@@ -1,9 +1,10 @@
 import threading
 
 import structlog
-from structlog.contextvars import bind_contextvars
+from structlog.contextvars import bind_contextvars, clear_contextvars
 
 from app import CONFIG
+from app.eq_converter import process
 
 logger = structlog.get_logger()
 
@@ -13,8 +14,21 @@ def callback(message):
     bind_contextvars(app="SDX-EQ-Converter")
     bind_contextvars(tx_id=tx_id)
     bind_contextvars(thread=threading.currentThread().getName())
-    logger.info(f"tx_id = {tx_id}")
-    message.ack()
+    encrypted_response_str = None
+
+    try:
+        encrypted_response_str = message.data.decode('utf-8')
+        process(tx_id, encrypted_response_str)
+
+    except Exception as error:
+        if encrypted_response_str is None:
+            logger.error("encrypted_response_str is none, quarantining response instead!")
+        else:
+            logger.error(f"quarantining response: {error}")
+
+    finally:
+        clear_contextvars()
+        message.ack()
 
 
 def start():

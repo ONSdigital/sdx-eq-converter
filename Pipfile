@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 google-cloud-pubsub = "==2.4.1"
 structlog = "==21.1.0"
+google-cloud-storage = "==1.37.1"
 
 [dev-packages]
 
