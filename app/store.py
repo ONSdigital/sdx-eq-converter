@@ -10,8 +10,7 @@ def write_to_bucket(data: bytes, filename: str):
     """
     Uploads a string submission to the correct folder within the GCP outputs bucket.
     """
-    logger.info("Uploading to bucket")
-    logger.info(f"Storing as {filename}")
+    logger.info(f"Uploading to bucket: {filename}")
     blob = CONFIG.BUCKET.blob(filename)
     blob.upload_from_string(data)
     logger.info(f"Successfully uploaded: {filename}")
