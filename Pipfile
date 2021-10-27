@@ -9,6 +9,8 @@ structlog = "==21.1.0"
 google-cloud-storage = "==1.37.1"
 
 [dev-packages]
+pytest = "==6.2.3"
+pytest-cov = "==2.11.1"
 
 [requires]
 python_version = "3.8"
