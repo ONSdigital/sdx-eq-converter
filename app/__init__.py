@@ -6,6 +6,7 @@ logging_config()
 
 project_id = os.getenv('PROJECT_ID', 'ons-sdx-sandbox')
 subscription_id = "survey-subscription"
+quarantine_topic_id = "quarantine-survey-topic"
 
 
 class Config:
@@ -15,6 +16,8 @@ class Config:
         self.PROJECT_ID = proj_id
         self.SURVEY_SUBSCRIBER = None
         self.SURVEY_SUBSCRIPTION_PATH = None
+        self.QUARANTINE_PUBLISHER = None
+        self.QUARANTINE_TOPIC_PATH = None
         self.BUCKET_NAME = f'{proj_id}-survey-responses'
         self.BUCKET = None
 
@@ -34,6 +37,10 @@ def cloud_config():
     survey_subscriber = pubsub_v1.SubscriberClient()
     CONFIG.SURVEY_SUBSCRIPTION_PATH = survey_subscriber.subscription_path(project_id, subscription_id)
     CONFIG.SURVEY_SUBSCRIBER = survey_subscriber
+
+    quarantine_publisher = pubsub_v1.PublisherClient()
+    CONFIG.QUARANTINE_TOPIC_PATH = quarantine_publisher.topic_path(project_id, quarantine_topic_id)
+    CONFIG.QUARANTINE_PUBLISHER = quarantine_publisher
 
     storage_client = storage.Client(CONFIG.PROJECT_ID)
     CONFIG.BUCKET = storage_client.bucket(CONFIG.BUCKET_NAME)
