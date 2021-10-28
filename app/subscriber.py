@@ -5,6 +5,7 @@ from structlog.contextvars import bind_contextvars, clear_contextvars
 
 from app import CONFIG
 from app.eq_converter import process
+from app.quarantine import quarantine_submission
 
 logger = structlog.get_logger()
 
@@ -23,8 +24,10 @@ def callback(message):
     except Exception as error:
         if encrypted_response_str is None:
             logger.error("encrypted_response_str is none, quarantining response instead!")
+            quarantine_submission("no data", tx_id, str(error))
         else:
             logger.error(f"quarantining response: {error}")
+            quarantine_submission(encrypted_response_str, tx_id, str(error))
 
     finally:
         clear_contextvars()
